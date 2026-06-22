@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plains Native American Treaties &amp; Western Settlement Programs</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f8f7f4; color: #1a1a18; line-height: 1.6; }
+  .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  h1 { font-size: 1.75rem; font-weight: 600; color: #0C447C; margin-bottom: 0.4rem; }
+  h2 { font-size: 1.1rem; font-weight: 600; color: #0C447C; margin: 2rem 0 0.75rem; border-bottom: 1px solid #D3D1C7; padding-bottom: 0.4rem; }
+  h3 { font-size: 0.95rem; font-weight: 600; color: #2C2C2A; margin: 1.2rem 0 0.5rem; }
+  p { font-size: 0.9rem; color: #444441; margin-bottom: 0.75rem; }
+  .subtitle { font-size: 0.9rem; color: #5F5E5A; margin-bottom: 1.5rem; max-width: 720px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; font-weight: 500; padding: 5px 12px; border-radius: 6px; border: 1px solid; }
+  .leg-treaty  { background:#E6F1FB; color:#0C447C; border-color:#B5D4F4; }
+  .leg-broken  { background:#FAECE7; color:#712B13; border-color:#F5C4B3; }
+  .leg-land    { background:#E1F5EE; color:#085041; border-color:#5DCAA5; }
+  .legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; align-items: center; }
+  .controls span { font-size: 0.8rem; color: #5F5E5A; }
+  .filter-btn { font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; border: 1px solid #B4B2A9; background: white; color: #5F5E5A; cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: #888780; color: #2C2C2A; }
+  .filter-btn.active { background: #0C447C; color: white; border-color: #0C447C; }
+
+  .timeline-wrap { position: relative; overflow-x: auto; margin-bottom: 1rem; }
+  .timeline-inner { min-width: 680px; }
+  .axis-row { display: flex; border-bottom: 1px solid #D3D1C7; margin-bottom: 4px; padding-bottom: 3px; }
+  .axis-spacer { flex-shrink: 0; }
+  .axis-labels { flex: 1; position: relative; height: 18px; }
+  .axis-label { position: absolute; font-size: 0.7rem; color: #888780; transform: translateX(-50%); }
+
+  .nation-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .nation-name { font-size: 0.78rem; font-weight: 500; color: #5F5E5A; flex-shrink: 0; }
+  .bar-area { flex: 1; position: relative; height: 28px; }
+  .grid-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #EDEDEA; pointer-events: none; }
+  .event-dot { position: absolute; width: 13px; height: 13px; border-radius: 50%; top: 50%; transform: translate(-50%, -50%); cursor: pointer; border: 1.5px solid; transition: transform 0.12s; z-index: 2; }
+  .event-dot:hover { transform: translate(-50%, -50%) scale(1.4); z-index: 10; }
+  .dot-treaty { background: #378ADD; border-color: #0C447C; }
+  .dot-broken  { background: #D85A30; border-color: #712B13; }
+  .dot-land    { background: #1D9E75; border-color: #085041; }
+
+  .tooltip { position: fixed; background: white; border: 1px solid #D3D1C7; border-radius: 10px; padding: 12px 16px; font-size: 0.82rem; max-width: 300px; z-index: 1000; pointer-events: none; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.1); line-height: 1.5; }
+  .tt-title { font-weight: 600; margin-bottom: 3px; color: #1a1a18; }
+  .tt-year  { font-size: 0.75rem; color: #888780; margin-bottom: 5px; }
+  .tt-body  { color: #444441; font-size: 0.8rem; }
+
+  .detail-section { margin-top: 0.5rem; }
+  .detail-card { border-radius: 8px; border: 1px solid; padding: 10px 14px; margin-bottom: 6px; display: grid; grid-template-columns: 56px 1fr; gap: 10px; }
+  .dc-treaty { background: #E6F1FB; border-color: #B5D4F4; }
+  .dc-broken { background: #FAECE7; border-color: #F5C4B3; }
+  .dc-land   { background: #E1F5EE; border-color: #9FE1CB; }
+  .dc-year   { font-size: 0.78rem; font-weight: 700; padding-top: 1px; }
+  .dc-year-treaty { color: #0C447C; }
+  .dc-year-broken { color: #712B13; }
+  .dc-year-land   { color: #085041; }
+  .dc-name   { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; color: #2C2C2A; }
+  .dc-note   { font-size: 0.78rem; color: #5F5E5A; line-height: 1.45; }
+
+  .context-box { background: #F1EFE8; border-radius: 10px; padding: 1.25rem; margin: 1.5rem 0; font-size: 0.85rem; color: #444441; border: 1px solid #D3D1C7; }
+  .context-box strong { color: #2C2C2A; }
+  hr.section { border: none; border-top: 1px solid #D3D1C7; margin: 2rem 0; }
+  .sources { font-size: 0.75rem; color: #888780; font-style: italic; margin-top: 2rem; }
+  @media (max-width: 600px) { .page { padding: 1rem 1rem 3rem; } h1 { font-size: 1.3rem; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Plains Native American Treaties &amp; Western Settlement Programs</h1>
+<p class="subtitle">A chronological record of US government treaties with Plains nations, their abrogation, and concurrent land-distribution policies targeting Eastern immigrant populations, 1820–1892.</p>
+
+<div class="legend">
+  <div class="legend-item leg-treaty"><div class="legend-dot" style="background:#378ADD;"></div> Treaty signed</div>
+  <div class="legend-item leg-broken"><div class="legend-dot" style="background:#D85A30;"></div> Treaty broken / abrogated</div>
+  <div class="legend-item leg-land"><div class="legend-dot" style="background:#1D9E75;"></div> Land / settlement program</div>
+</div>
+
+<div class="controls">
+  <span>Filter:</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="Lakota/Sioux">Lakota / Sioux</button>
+  <button class="filter-btn" data-filter="Cheyenne">Cheyenne</button>
+  <button class="filter-btn" data-filter="Comanche">Comanche</button>
+  <button class="filter-btn" data-filter="Arapaho">Arapaho</button>
+  <button class="filter-btn" data-filter="Crow">Crow</button>
+  <button class="filter-btn" data-filter="Kiowa">Kiowa</button>
+  <button class="filter-btn" data-filter="Land Programs">Land Programs</button>
+</div>
+
+<div class="timeline-wrap">
+  <div class="timeline-inner" id="tl-inner">
+    <div class="axis-row" id="axis-row"></div>
+    <div id="tl-rows"></div>
+  </div>
+</div>
+<p style="font-size:0.75rem;color:#888780;margin-top:4px;">Hover or tap any dot for details.</p>
+
+<div id="detail-area"></div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<hr class="section">
+<h2>Background: the connection between treaties and settlement</h2>
+<div class="context-box">
+  <p>The treaty violations and land programs shown above were not parallel but <strong>interlocking processes</strong>. Each abrogated treaty or reduced reservation opened specific acreage for federal disposal under programs like the Homestead Act. The <strong>Dawes Act of 1887</strong> made this explicit: it simultaneously broke up tribal communal lands into individual allotments and declared the "surplus" — often tens of millions of acres — available for homesteading.</p>
+  <p>Railroad companies, which received vast land grants via the Pacific Railway Acts, actively recruited immigrants in Europe — particularly <strong>German, Scandinavian, and Bohemian</strong> farming communities — with pamphlets promising fertile Prairie land at low or no cost. The Burlington, Northern Pacific, and Santa Fe railroads maintained European immigration bureaus through the 1870s–1890s, channeling tens of thousands of families onto land that had been guaranteed to Plains nations by treaty just years or decades before.</p>
+  <p>The <strong>1871 Indian Appropriations Act</strong> — which ended formal treaty-making with tribes — removed the last procedural constraint on this process, allowing Congress to open reservation lands through simple legislation rather than negotiated agreement.</p>
+</div>
+
+<p class="sources">Sources: US Statutes at Large; Prucha, F.P., <em>American Indian Treaties</em> (1994); Hoxie, F.E., <em>A Final Promise</em> (1984); White, R., <em>It's Your Misfortune and None of My Own</em> (1991). Created with Claude (Anthropic).</p>
+</div>
+
+<script>
+const MIN = 1820, MAX = 1892;
+function pct(y){ return ((y-MIN)/(MAX-MIN)*100).toFixed(3)+'%'; }
+
+const nations = [
+  { id:"Lakota/Sioux", events:[
+    {y:1825,t:"treaty",n:"Fort Atkinson Treaty",d:"Acknowledged US authority; established peace and trade relations with the Teton Sioux."},
+    {y:1851,t:"treaty",n:"Fort Laramie Treaty (1851)",d:"Defined tribal territories on the northern plains; promised annuities for safe emigrant passage."},
+    {y:1865,t:"treaty",n:"Fort Sully Treaties",d:"Post-Civil War agreements with Sioux bands seeking to end hostilities after the Dakota War."},
+    {y:1868,t:"treaty",n:"Fort Laramie Treaty (1868)",d:"Guaranteed the Great Sioux Reservation including the Black Hills. One of the most consequential Plains treaties."},
+    {y:1874,t:"broken",n:"Black Hills Gold Rush / violation",d:"US Army failed to stop settlers after gold discovered by Custer's 1874 expedition — direct violation of the 1868 treaty."},
+    {y:1877,t:"broken",n:"Black Hills seized (Act of 1877)",d:"Congress unilaterally seized the Black Hills without Lakota consent. Ruled an illegal taking by the US Supreme Court in 1980."},
+    {y:1889,t:"broken",n:"Great Sioux Reservation broken up",d:"Dawes Act pressure split the Great Sioux Reservation into six smaller reservations, drastically reducing the land base."},
+  ]},
+  { id:"Cheyenne", events:[
+    {y:1825,t:"treaty",n:"Fort Atkinson Treaty",d:"Peace and friendship treaty establishing US trading relations with the Cheyenne."},
+    {y:1851,t:"treaty",n:"Fort Laramie Treaty (1851)",d:"Recognized Cheyenne territory between the Platte and Arkansas Rivers."},
+    {y:1861,t:"treaty",n:"Treaty of Fort Wise",d:"Southern Cheyenne ceded most lands; confined to a small reservation on Sand Creek."},
+    {y:1864,t:"broken",n:"Sand Creek Massacre",d:"Colorado militia attacked a peaceful encampment under US protection, killing ~150–200 Cheyenne and Arapaho people."},
+    {y:1867,t:"treaty",n:"Medicine Lodge Treaty",d:"Southern Cheyenne confined to Indian Territory; promised annuities and a permanent reservation."},
+    {y:1874,t:"broken",n:"Red River War / forced removal",d:"US Army forced Southern Cheyenne onto reservations; horses and weapons confiscated, leaders imprisoned."},
+    {y:1876,t:"broken",n:"Northern Cheyenne forced south",d:"Forcibly removed to Oklahoma after the Great Sioux War, violating treaty terms."},
+  ]},
+  { id:"Comanche", events:[
+    {y:1835,t:"treaty",n:"Camp Holmes Treaty",d:"First formal US–Comanche treaty; established peace and trade with non-Indian travelers."},
+    {y:1846,t:"treaty",n:"Council Springs Treaty",d:"Peace agreement after Texas annexation; Comanche acknowledged US sovereignty."},
+    {y:1853,t:"treaty",n:"Fort Atkinson Treaty (1853)",d:"Comanche allowed roads and military posts through their territory in exchange for annuities."},
+    {y:1867,t:"treaty",n:"Medicine Lodge Treaty",d:"Comanche, Kiowa, and Kiowa-Apache confined to a reservation in southwestern Indian Territory."},
+    {y:1871,t:"broken",n:"Congress ends treaty-making",d:"1871 Indian Appropriations Act declared no more treaties with tribes, nullifying the entire treaty framework."},
+    {y:1874,t:"broken",n:"Red River War",d:"US Army campaign destroyed Comanche villages; end of independent Comanche life on the southern plains."},
+  ]},
+  { id:"Arapaho", events:[
+    {y:1851,t:"treaty",n:"Fort Laramie Treaty (1851)",d:"Defined Arapaho territory; promised annuities for safe emigrant passage."},
+    {y:1861,t:"treaty",n:"Treaty of Fort Wise",d:"Southern Arapaho signed alongside Southern Cheyenne; ceded most lands for a small reservation."},
+    {y:1864,t:"broken",n:"Sand Creek Massacre",d:"Arapaho at Sand Creek killed despite being under US government protection."},
+    {y:1867,t:"treaty",n:"Medicine Lodge Treaty",d:"Southern Arapaho assigned a reservation in Indian Territory alongside Southern Cheyenne."},
+    {y:1868,t:"treaty",n:"Fort Laramie Treaty (1868)",d:"Northern Arapaho included in the northern plains treaty framework."},
+    {y:1878,t:"broken",n:"Northern Arapaho forced onto Wind River",d:"Placed on the Shoshone Wind River Reservation in Wyoming without a separate treaty."},
+  ]},
+  { id:"Crow", events:[
+    {y:1825,t:"treaty",n:"Friendship Treaty",d:"Early peace and trade agreement acknowledging US sovereignty."},
+    {y:1851,t:"treaty",n:"Fort Laramie Treaty (1851)",d:"Crow territory recognized in present-day Montana and Wyoming."},
+    {y:1868,t:"treaty",n:"Fort Laramie Treaty (1868)",d:"Crow Reservation established in south-central Montana; Crow served as US Army scouts."},
+    {y:1882,t:"broken",n:"Crow Reservation reduced",d:"Federal pressure led to cession of the western portion of the Crow Reservation."},
+    {y:1888,t:"broken",n:"Further land cessions",d:"Additional cessions cut the Crow Reservation substantially; Northern Pacific Railroad interests a major factor."},
+  ]},
+  { id:"Kiowa", events:[
+    {y:1837,t:"treaty",n:"Fort Gibson Treaty",d:"Peace treaty establishing friendly Kiowa–US relations."},
+    {y:1853,t:"treaty",n:"Fort Atkinson Treaty (1853)",d:"Kiowa agreed to allow roads and forts in exchange for annuities."},
+    {y:1867,t:"treaty",n:"Medicine Lodge Treaty",d:"Kiowa assigned a reservation in southwestern Indian Territory; promised annuities, schools, and a farm program."},
+    {y:1871,t:"broken",n:"Congress ends treaty-making",d:"1871 Indian Appropriations Act stripped tribes of nation status for treaty purposes."},
+    {y:1874,t:"broken",n:"Red River War",d:"Kiowa resistance crushed; leaders Satanta and Big Tree imprisoned. Forced onto reservation permanently."},
+    {y:1887,t:"broken",n:"Dawes Act / allotment",d:"General Allotment Act broke up communal reservation lands; vast 'surplus' lands opened to white and immigrant settlement."},
+  ]},
+  { id:"Land Programs", events:[
+    {y:1820,t:"land",n:"Land Act of 1820",d:"Lowered minimum purchase price to $1.25/acre; eliminated credit sales, making land more accessible to recent immigrants in Eastern cities."},
+    {y:1841,t:"land",n:"Pre-emption Act of 1841",d:"Allowed squatters on federal land to purchase up to 160 acres at minimum price before public auction. Legalized 'squatter sovereignty.'"},
+    {y:1854,t:"land",n:"Graduation Act of 1854",d:"Reduced prices on unsold federal land down to as little as 12.5 cents/acre. Targeted at poorer immigrants unable to afford standard prices."},
+    {y:1862,t:"land",n:"Homestead Act of 1862",d:"Any citizen (or intended citizen) could claim 160 acres, pay a small filing fee, and receive title after 5 years. Explicitly promoted as relief for overcrowded immigrant populations in Eastern cities."},
+    {y:1862,t:"land",n:"Pacific Railway Act of 1862",d:"Granted railroad companies vast land alongside transcontinental lines — a major mechanism opening Plains lands to immigrant colonization. Railroads advertised directly in Europe."},
+    {y:1873,t:"land",n:"Timber Culture Act of 1873",d:"Settlers could claim an additional 160 acres if they planted trees on 40 acres. Used heavily by German and Scandinavian immigrant farming communities."},
+    {y:1877,t:"land",n:"Desert Land Act of 1877",d:"Allowed settlers in arid states to claim up to 640 acres at $1.25/acre if they irrigated within 3 years. Widely abused by land speculators."},
+    {y:1878,t:"land",n:"Timber and Stone Act of 1878",d:"160 acres of timberland at $2.50/acre. Often fraudulently used by lumber companies employing immigrant 'dummy entrymen.'"},
+    {y:1887,t:"land",n:"Dawes (General Allotment) Act of 1887",d:"Broke up tribal reservation lands; 'surplus' — often millions of acres — opened to homesteaders. Devastated tribal land bases while multiplying settlement opportunities."},
+    {y:1889,t:"land",n:"Oklahoma Land Run of 1889",d:"Two million acres of former Indian Territory opened on April 22, 1889. An estimated 50,000 settlers (many recent immigrants) raced to claim 160-acre plots."},
+  ]},
+];
+
+const LABEL_W = 120;
+
+function buildAxis(){
+  const row = document.getElementById('axis-row');
+  const spacer = document.createElement('div');
+  spacer.className = 'axis-spacer';
+  spacer.style.width = LABEL_W+'px';
+  row.appendChild(spacer);
+  const labels = document.createElement('div');
+  labels.className = 'axis-labels';
+  for(let y=MIN; y<=MAX; y+=10){
+    const s = document.createElement('span');
+    s.className = 'axis-label';
+    s.textContent = y;
+    s.style.left = pct(y);
+    labels.appendChild(s);
+  }
+  row.appendChild(labels);
+}
+
+function buildRows(filter){
+  const container = document.getElementById('tl-rows');
+  container.innerHTML = '';
+  const data = filter==='all' ? nations : nations.filter(n=>n.id===filter);
+  data.forEach(nation=>{
+    const row = document.createElement('div');
+    row.className = 'nation-row';
+    const lbl = document.createElement('div');
+    lbl.className = 'nation-name';
+    lbl.style.width = LABEL_W+'px';
+    lbl.textContent = nation.id;
+    row.appendChild(lbl);
+    const area = document.createElement('div');
+    area.className = 'bar-area';
+    for(let y=MIN;y<=MAX;y+=10){
+      const gl = document.createElement('div');
+      gl.className = 'grid-line';
+      gl.style.left = pct(y);
+      area.appendChild(gl);
+    }
+    nation.events.forEach(ev=>{
+      const dot = document.createElement('div');
+      dot.className = 'event-dot dot-'+ev.t;
+      dot.style.left = pct(ev.y);
+      dot.addEventListener('mouseenter', e=>showTip(e,ev));
+      dot.addEventListener('mouseleave', hideTip);
+      dot.addEventListener('mousemove', moveTip);
+      area.appendChild(dot);
+    });
+    row.appendChild(area);
+    container.appendChild(row);
+  });
+  buildDetails(filter);
+}
+
+function buildDetails(filter){
+  const area = document.getElementById('detail-area');
+  area.innerHTML = '';
+  const data = filter==='all' ? nations : nations.filter(n=>n.id===filter);
+  data.forEach(nation=>{
+    const h = document.createElement('h3');
+    h.textContent = nation.id;
+    area.appendChild(h);
+    const sec = document.createElement('div');
+    sec.className = 'detail-section';
+    nation.events.forEach(ev=>{
+      const card = document.createElement('div');
+      card.className = 'detail-card dc-'+ev.t;
+      const yr = document.createElement('div');
+      yr.className = 'dc-year dc-year-'+ev.t;
+      yr.textContent = ev.y;
+      const body = document.createElement('div');
+      const nm = document.createElement('div');
+      nm.className = 'dc-name';
+      nm.textContent = ev.n;
+      const nt = document.createElement('div');
+      nt.className = 'dc-note';
+      nt.textContent = ev.d;
+      body.appendChild(nm);
+      body.appendChild(nt);
+      card.appendChild(yr);
+      card.appendChild(body);
+      sec.appendChild(card);
+    });
+    area.appendChild(sec);
+  });
+}
+
+const tt = document.getElementById('tooltip');
+function showTip(e,ev){
+  const typeLabel = ev.t==='treaty'?'Treaty signed':ev.t==='broken'?'Abrogated / violated':'Land / settlement program';
+  tt.innerHTML = '<div class="tt-title">'+ev.n+'</div><div class="tt-year">'+ev.y+' &mdash; '+typeLabel+'</div><div class="tt-body">'+ev.d+'</div>';
+  tt.style.display = 'block';
+  moveTip(e);
+}
+function moveTip(e){
+  const x = Math.min(e.clientX+14, window.innerWidth-320);
+  tt.style.left = x+'px';
+  tt.style.top = (e.clientY-12)+'px';
+}
+function hideTip(){ tt.style.display='none'; }
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    buildRows(this.dataset.filter);
+  });
+});
+
+buildAxis();
+buildRows('all');
+</script>
+</body>
+</html>

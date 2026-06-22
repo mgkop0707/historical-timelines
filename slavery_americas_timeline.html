@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slavery in the Americas: A Comparative Timeline</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f8f7f4; color: #1a1a18; line-height: 1.6; }
+  .page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  h1 { font-size: 1.75rem; font-weight: 600; color: #2C2C2A; margin-bottom: 0.4rem; }
+  h2 { font-size: 1.05rem; font-weight: 600; color: #0C447C; margin: 2rem 0 0.6rem; border-bottom: 1px solid #D3D1C7; padding-bottom: 0.35rem; }
+  h3 { font-size: 0.9rem; font-weight: 600; color: #2C2C2A; margin: 1rem 0 0.4rem; }
+  p { font-size: 0.88rem; color: #444441; margin-bottom: 0.6rem; }
+  .subtitle { font-size: 0.88rem; color: #5F5E5A; margin-bottom: 1.25rem; max-width: 800px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 500; padding: 4px 10px; border-radius: 6px; border: 1px solid; }
+  .leg-african   { background:#EEEDFE; color:#3C3489; border-color:#AFA9EC; }
+  .leg-native    { background:#EAF3DE; color:#3B6D11; border-color:#97C459; }
+  .leg-jewish    { background:#FAEEDA; color:#633806; border-color:#EF9F27; }
+  .leg-european  { background:#FBEAF0; color:#72243E; border-color:#ED93B1; }
+  .leg-intraaf   { background:#E1F5EE; color:#085041; border-color:#5DCAA5; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  .tab-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+  .tab-btn { font-size: 0.8rem; padding: 6px 14px; border-radius: 6px; border: 1px solid #B4B2A9; background: white; color: #5F5E5A; cursor: pointer; transition: all 0.15s; }
+  .tab-btn:hover { border-color: #888780; color: #2C2C2A; }
+  .tab-btn.active { background: #0C447C; color: white; border-color: #0C447C; }
+
+  .section-panel { display: none; }
+  .section-panel.visible { display: block; }
+
+  .tl-wrap { overflow-x: auto; margin-bottom: 0.5rem; }
+  .tl-inner { position: relative; }
+  .tl-axis { display: flex; border-bottom: 1px solid #D3D1C7; margin-bottom: 2px; padding-bottom: 2px; }
+  .tl-axis-spacer { flex-shrink: 0; }
+  .tl-axis-labels { flex: 1; position: relative; height: 16px; }
+  .tl-axis-label { position: absolute; font-size: 0.65rem; color: #888780; transform: translateX(-50%); }
+
+  .span-row { display: flex; align-items: center; margin-bottom: 5px; min-height: 26px; }
+  .span-label { font-size: 0.73rem; color: #5F5E5A; flex-shrink: 0; padding-right: 8px; line-height: 1.3; }
+  .span-bar-area { flex: 1; position: relative; height: 22px; }
+  .grid-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #EDEDEA; pointer-events: none; }
+  .span-bar { position: absolute; height: 14px; top: 4px; border-radius: 4px; border: 1px solid; cursor: pointer; transition: opacity 0.12s; display: flex; align-items: center; padding: 0 4px; overflow: hidden; white-space: nowrap; }
+  .span-bar:hover { opacity: 0.75; z-index: 10; }
+  .span-bar-label { font-size: 0.6rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+
+  .bar-african  { background:#AFA9EC; border-color:#534AB7; }
+  .bar-african .span-bar-label { color:#26215C; }
+  .bar-native   { background:#97C459; border-color:#3B6D11; }
+  .bar-native .span-bar-label  { color:#173404; }
+  .bar-jewish   { background:#EF9F27; border-color:#854F0B; }
+  .bar-jewish .span-bar-label  { color:#412402; }
+  .bar-european { background:#ED93B1; border-color:#993556; }
+  .bar-european .span-bar-label { color:#4B1528; }
+  .bar-intraaf  { background:#5DCAA5; border-color:#0F6E56; }
+  .bar-intraaf .span-bar-label  { color:#04342C; }
+
+  .tooltip { position: fixed; background: white; border: 1px solid #D3D1C7; border-radius: 10px; padding: 12px 16px; font-size: 0.82rem; max-width: 320px; z-index: 1000; pointer-events: none; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.1); line-height: 1.5; }
+  .tt-title { font-weight: 600; margin-bottom: 2px; color: #1a1a18; }
+  .tt-dates { font-size: 0.73rem; color: #888780; margin-bottom: 5px; }
+  .tt-body  { color: #444441; font-size: 0.79rem; }
+
+  .detail-card { border-radius: 8px; border: 1px solid; padding: 10px 14px; margin-bottom: 6px; display: grid; grid-template-columns: 80px 1fr; gap: 10px; }
+  .dc-african  { background:#EEEDFE; border-color:#AFA9EC; }
+  .dc-native   { background:#EAF3DE; border-color:#C0DD97; }
+  .dc-jewish   { background:#FAEEDA; border-color:#FAC775; }
+  .dc-european { background:#FBEAF0; border-color:#F4C0D1; }
+  .dc-intraaf  { background:#E1F5EE; border-color:#9FE1CB; }
+  .dc-year  { font-size: 0.75rem; font-weight: 700; line-height: 1.3; padding-top: 1px; }
+  .dc-year-african  { color:#3C3489; }
+  .dc-year-native   { color:#3B6D11; }
+  .dc-year-jewish   { color:#633806; }
+  .dc-year-european { color:#72243E; }
+  .dc-year-intraaf  { color:#085041; }
+  .dc-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; color: #2C2C2A; }
+  .dc-note { font-size: 0.77rem; color: #5F5E5A; line-height: 1.45; }
+
+  .power-block { margin-bottom: 1.5rem; }
+  .power-heading { font-size: 0.95rem; font-weight: 600; color: #0C447C; border-left: 3px solid #378ADD; padding-left: 10px; margin: 1.25rem 0 0.6rem; }
+
+  .transition-card { background: white; border: 1px solid #D3D1C7; border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .tc-header { background: #E6F1FB; padding: 8px 14px; display: flex; gap: 14px; align-items: baseline; border-bottom: 1px solid #B5D4F4; }
+  .tc-year { font-size: 0.78rem; font-weight: 700; color: #0C447C; flex-shrink: 0; }
+  .tc-title { font-size: 0.85rem; font-weight: 600; color: #1a1a18; }
+  .tc-body { padding: 10px 14px; font-size: 0.82rem; color: #444441; line-height: 1.5; }
+
+  table.scale { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.5rem; }
+  table.scale th { background: #F1EFE8; font-weight: 600; text-align: left; padding: 7px 10px; border: 1px solid #D3D1C7; color: #2C2C2A; }
+  table.scale td { padding: 6px 10px; border: 1px solid #D3D1C7; color: #444441; vertical-align: top; }
+  table.scale tr:nth-child(even) td { background: #f8f7f4; }
+
+  .context-box { background: #F1EFE8; border-radius: 10px; padding: 1.25rem; margin: 1rem 0; font-size: 0.85rem; color: #444441; border: 1px solid #D3D1C7; }
+  hr.section { border: none; border-top: 1px solid #D3D1C7; margin: 1.5rem 0; }
+  .sources { font-size: 0.73rem; color: #888780; font-style: italic; margin-top: 2rem; line-height: 1.6; }
+  @media (max-width: 600px) { .page { padding: 1rem 1rem 3rem; } h1 { font-size: 1.25rem; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Slavery in the Americas</h1>
+<p class="subtitle">A comparative timeline of European, African, and Indigenous enslavement across colonial powers and companies, c. 650–1900 CE. Includes Old World context for intra-European enslavement of Slavic peoples, Arab-run trans-Saharan trade, and intra-African enslavement that preceded and fed the Atlantic trade. Inspired by Gerald Horne, <em>The Dawning of the Apocalypse</em> (2020).</p>
+
+<div class="legend">
+  <div class="legend-item leg-african"><div class="legend-dot" style="background:#7F77DD;"></div> Enslaved Africans</div>
+  <div class="legend-item leg-native"><div class="legend-dot" style="background:#639922;"></div> Enslaved Native peoples</div>
+  <div class="legend-item leg-jewish"><div class="legend-dot" style="background:#BA7517;"></div> Jewish / converso forced labor</div>
+  <div class="legend-item leg-european"><div class="legend-dot" style="background:#D4537E;"></div> European enslavement of Europeans</div>
+  <div class="legend-item leg-intraaf"><div class="legend-dot" style="background:#1D9E75;"></div> Intra-African / Arab-African trade</div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="oldworld">Old World context</button>
+  <button class="tab-btn" data-tab="americas">Americas by power</button>
+  <button class="tab-btn" data-tab="transitions">Transitions &amp; successions</button>
+  <button class="tab-btn" data-tab="scale">Scale &amp; numbers</button>
+</div>
+
+<div id="tab-oldworld" class="section-panel visible">
+  <h2>Part I — Old World context: intra-European &amp; pre-Atlantic African slavery (c. 650–1830)</h2>
+  <p>Slavery was not invented by Atlantic colonialism. The word "slave" derives from "Slav" — Slavic peoples were among the most trafficked groups in medieval Europe and the Middle East. Arab-run trans-Saharan and Indian Ocean trades moved more Africans over a longer period than the Atlantic trade. These contexts shaped who was enslaved, how, and by whom when European colonizers built the Atlantic system. Hover bars for details.</p>
+  <div class="tl-wrap"><div class="tl-inner" id="ow-tl"></div></div>
+  <div id="ow-details"></div>
+</div>
+
+<div id="tab-americas" class="section-panel">
+  <h2>Part II — Slavery in the Americas by colonial power (1493–1888)</h2>
+  <p>Bars show the approximate span of legally sanctioned slavery practiced by each colonial power in the Americas, broken out by enslaved population. Hover bars for details.</p>
+  <div class="tl-wrap"><div class="tl-inner" id="am-tl"></div></div>
+  <div id="am-details"></div>
+</div>
+
+<div id="tab-transitions" class="section-panel">
+  <h2>Part III — Transitions: how enslaved populations succeeded one another</h2>
+  <p>A recurring pattern in colonial slavery was the substitution of one enslaved population for another as demographics, economics, or politics shifted. The transition from legal slavery to quasi-slavery after formal abolition is particularly significant.</p>
+  <div id="transitions-content"></div>
+</div>
+
+<div id="tab-scale" class="section-panel">
+  <h2>Part IV — Scale: estimated numbers enslaved</h2>
+  <p>All estimates drawn from scholarly consensus; subject to revision. The <a href="https://slavevoyages.org" target="_blank">Slave Voyages database</a> is the authoritative source for Atlantic trade figures.</p>
+  <div id="scale-content"></div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<p class="sources">Sources: Davis, D.B., <em>Inhuman Bondage</em> (2006); Klein, H.S., <em>The Atlantic Slave Trade</em> (2010); Eltis &amp; Richardson, <em>Atlas of the Transatlantic Slave Trade</em> (2010); Lovejoy, P., <em>Transformations in Slavery</em> (2000); Davis, R.C., <em>Christian Slaves, Muslim Masters</em> (2003); Baptist, E., <em>The Half Has Never Been Told</em> (2014); Blackburn, R., <em>The Making of New World Slavery</em> (1997). Created with Claude (Anthropic).</p>
+</div>
+
+<script>
+const tt = document.getElementById('tooltip');
+function showTip(e,title,dates,body){ tt.innerHTML='<div class="tt-title">'+title+'</div><div class="tt-dates">'+dates+'</div><div class="tt-body">'+body+'</div>'; tt.style.display='block'; moveTip(e); }
+function moveTip(e){ tt.style.left=Math.min(e.clientX+14,window.innerWidth-340)+'px'; tt.style.top=(e.clientY-12)+'px'; }
+function hideTip(){ tt.style.display='none'; }
+
+function buildSpanTimeline(containerId, rows, minY, maxY, labelW){
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  const span = maxY - minY;
+  function pct(y){ return ((y-minY)/span*100).toFixed(2)+'%'; }
+
+  const axisDiv = document.createElement('div');
+  axisDiv.className = 'tl-axis';
+  const sp = document.createElement('div');
+  sp.className = 'tl-axis-spacer';
+  sp.style.width = labelW+'px';
+  axisDiv.appendChild(sp);
+  const lblArea = document.createElement('div');
+  lblArea.className = 'tl-axis-labels';
+  const step = (maxY - minY) > 500 ? 100 : 50;
+  for(let y=Math.ceil(minY/step)*step; y<=maxY; y+=step){
+    const l = document.createElement('span');
+    l.className = 'tl-axis-label';
+    l.style.left = pct(y);
+    l.textContent = y;
+    lblArea.appendChild(l);
+  }
+  axisDiv.appendChild(lblArea);
+  wrap.appendChild(axisDiv);
+
+  rows.forEach(row=>{
+    const div = document.createElement('div');
+    div.className = 'span-row';
+    const lbl = document.createElement('div');
+    lbl.className = 'span-label';
+    lbl.style.width = labelW+'px';
+    lbl.textContent = row.label;
+    div.appendChild(lbl);
+    const area = document.createElement('div');
+    area.className = 'span-bar-area';
+    for(let y=Math.ceil(minY/step)*step; y<=maxY; y+=step){
+      const gl = document.createElement('div');
+      gl.className = 'grid-line';
+      gl.style.left = pct(y);
+      area.appendChild(gl);
+    }
+    const bar = document.createElement('div');
+    bar.className = 'span-bar bar-'+row.cls;
+    const x0 = Math.max(0,(row.start-minY)/span*100);
+    const x1 = Math.min(100,(row.end-minY)/span*100);
+    bar.style.left = x0.toFixed(2)+'%';
+    bar.style.width = Math.max(0.5, x1-x0).toFixed(2)+'%';
+    const bl = document.createElement('span');
+    bl.className = 'span-bar-label';
+    bl.textContent = row.start+'–'+row.end;
+    bar.appendChild(bl);
+    bar.addEventListener('mouseenter', e=>showTip(e, row.name, row.start+'–'+row.end+(row.group?' | '+row.group:''), row.note));
+    bar.addEventListener('mouseleave', hideTip);
+    bar.addEventListener('mousemove', moveTip);
+    area.appendChild(bar);
+    div.appendChild(area);
+    wrap.appendChild(div);
+  });
+}
+
+function buildDetailCards(containerId, items){
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  items.forEach(ev=>{
+    const card = document.createElement('div');
+    card.className = 'detail-card dc-'+ev.cls;
+    const yr = document.createElement('div');
+    yr.className = 'dc-year dc-year-'+ev.cls;
+    yr.textContent = ev.start+'–'+ev.end;
+    const body = document.createElement('div');
+    body.innerHTML = '<div class="dc-name">'+ev.name+'</div><div class="dc-note">'+ev.note+'</div>';
+    card.appendChild(yr); card.appendChild(body);
+    c.appendChild(card);
+  });
+}
+
+const owRows = [
+  {label:"Viking thralls",start:793,end:1100,cls:"european",name:"Viking slave trade (thralls)",group:"European→European",note:"Norse raiders enslaved captives across Britain, Ireland, and the Frankish kingdoms. The Old Norse word þræll (thrall) denoted enslaved persons of any origin."},
+  {label:"Slavic peoples (Byzantine/Ottoman)",start:900,end:1500,cls:"european",name:"Byzantine/Ottoman trade in Slavic peoples",group:"European→European",note:"The word 'slave' derives from 'Slav.' Slavic peoples were among the most trafficked in medieval Europe and the Middle East. Byzantine, Venetian, and Ottoman traders moved tens of thousands annually."},
+  {label:"Genoese/Venetian Black Sea trade",start:1200,end:1475,cls:"european",name:"Genoese/Venetian Black Sea slave trade",group:"European city-states",note:"Italian city-states ran slave markets at Caffa (Crimea) and Constantinople. Enslaved persons included Circassians, Tatars, Bulgarians, and Greeks — sold throughout the Mediterranean."},
+  {label:"Barbary Coast (Europeans enslaved)",start:1530,end:1830,cls:"european",name:"Barbary Coast enslavement of Europeans",group:"Muslim corsairs→Europeans",note:"Algerian, Tunisian, and Moroccan corsairs raided European coastlines (Spain, Italy, Ireland, Iceland), capturing an estimated 1–1.25 million Europeans into North African servitude over three centuries."},
+  {label:"West African internal slavery",start:1000,end:1900,cls:"intraaf",name:"West African kingdoms: internal slavery",group:"African→African",note:"Slavery existed in many West and Central African societies before European contact. Kingdoms such as Dahomey, Ashanti, and the Sokoto Caliphate were major slave-holding and slave-exporting polities."},
+  {label:"Trans-Saharan trade (Arab-run)",start:650,end:1900,cls:"intraaf",name:"Trans-Saharan slave trade (Arab-run)",group:"Arab merchants→African peoples",note:"Arab merchants moved an estimated 10–17 million enslaved Africans across the Sahara and via the Red Sea and Indian Ocean over 1,200+ years — predating and outlasting the Atlantic trade."},
+  {label:"Dahomey → Atlantic trade",start:1600,end:1850,cls:"intraaf",name:"Dahomey slave raids & Atlantic sales",group:"African kingdom→Atlantic trade",note:"The Kingdom of Dahomey (present-day Benin) built its wealth largely on capturing neighboring peoples and selling them at the port of Ouidah. An estimated 1–3 million passed through Dahomey into the Atlantic trade."},
+];
+
+const owDetails = owRows.map(r=>({...r,start:r.start,end:r.end,name:r.name,note:r.note}));
+
+const amRows = [
+  {label:"Portugal: Native (Brazil)",start:1500,end:1758,cls:"native",name:"Portugal: Native enslavement (Brazil)",group:"Native American",note:"Portuguese colonizers enslaved Tupi and other Brazilian peoples for sugar plantations. The Marquis of Pombal formally abolished Native enslavement in 1758, though de facto bondage persisted."},
+  {label:"Portugal: African (Brazil)",start:1526,end:1888,cls:"african",name:"Portugal: African enslavement (Brazil)",group:"African",note:"Brazil became the largest single Atlantic slave trade destination — receiving roughly 4.9 million of ~12.5 million Africans shipped. Brazil was the last Western Hemisphere country to abolish slavery (Lei Áurea, May 13, 1888)."},
+  {label:"Portugal: Jewish/converso",start:1497,end:1773,cls:"jewish",name:"Portugal: Jewish/converso forced labor",group:"Jewish/converso",note:"The Portuguese Inquisition (1536) targeted New Christians (conversos — Jews forcibly converted in 1497). Many were condemned to galley slavery or hard labor in colonial Brazil. The Old/New Christian distinction was abolished in 1773."},
+  {label:"Spain: Native (encomienda/mita)",start:1493,end:1720,cls:"native",name:"Spain: Native enslavement (encomienda/mita)",group:"Native American",note:"The encomienda system granted conquistadors Native labor. The mita forced Indigenous Andeans into silver mines at Potosí. The New Laws of 1542 nominally restricted it, but forced labor persisted for two more centuries."},
+  {label:"Spain: African (Americas)",start:1501,end:1886,cls:"african",name:"Spain: African enslavement (Americas)",group:"African",note:"Spain introduced enslaved Africans to Hispaniola by 1501. The asiento contract system gave foreign powers rights to supply enslaved Africans to Spanish colonies. Cuba abolished slavery last in 1886."},
+  {label:"Spain: Jewish expulsion/Inquisition",start:1492,end:1834,cls:"jewish",name:"Spain: Jewish expulsion & Inquisition",group:"Jewish/converso",note:"The Alhambra Decree (1492) expelled all professing Jews. Conversos faced Inquisition persecution, property confiscation, and galley slavery if found 'relapsing.' The Spanish Inquisition was not abolished until 1834."},
+  {label:"Britain: Native (N. America)",start:1636,end:1750,cls:"native",name:"England/Britain: Native enslavement",group:"Native American",note:"English colonists enslaved Native Americans captured in the Pequot War (1636), King Philip's War (1675–76), and Yamasee War (1715). Thousands were shipped to Caribbean plantations. South Carolina was a major exporter."},
+  {label:"Britain: African (Americas)",start:1619,end:1834,cls:"african",name:"England/Britain: African enslavement",group:"African",note:"The first recorded Africans arrived in Virginia in 1619. The Royal African Company (chartered 1672) held a monopoly. Britain transported ~3.1 million enslaved Africans. The Slavery Abolition Act of 1833 freed most enslaved persons in British colonies (effective 1834)."},
+  {label:"Britain: Irish indentured servants",start:1649,end:1700,cls:"european",name:"Britain: Irish indentured/forced servants",group:"European (Irish)",note:"After Cromwell's conquest of Ireland (1649), tens of thousands of Irish were transported to Barbados and other Caribbean colonies as indentured servants — a status that often functioned as de facto slavery."},
+  {label:"France: Native (Americas)",start:1635,end:1760,cls:"native",name:"France: Native enslavement",group:"Native American",note:"French colonists enslaved Fox, Natchez, and other Native peoples in Louisiana and the Great Lakes region. The Code Noir (1685) governed enslaved persons in French colonies but did not prohibit Native enslavement."},
+  {label:"France: African (Americas)",start:1635,end:1848,cls:"african",name:"France: African enslavement",group:"African",note:"Saint-Domingue (Haiti) was the most profitable colony in the world by the 1780s, worked by ~500,000 enslaved Africans. France transported ~1.4 million enslaved Africans. France abolished slavery in all remaining territories in 1848."},
+  {label:"Netherlands/WIC: African",start:1621,end:1863,cls:"african",name:"Netherlands/WIC: African enslavement",group:"African",note:"The Dutch West India Company (WIC, founded 1621) became a major slave-trading power, capturing Elmina fort in 1637. The Dutch transported ~550,000 enslaved Africans. The Netherlands abolished slavery in Suriname and the Dutch Antilles in 1863."},
+  {label:"US: African",start:1776,end:1865,cls:"african",name:"United States: African enslavement",group:"African",note:"At independence, ~500,000 enslaved African Americans lived in the new nation. The Three-Fifths Compromise entrenched slavery politically. The 13th Amendment abolished slavery in 1865 — though convict-lease systems immediately replaced it in the South."},
+  {label:"US: Native (peonage)",start:1776,end:1867,cls:"native",name:"United States: Native enslavement",group:"Native American",note:"Native enslavement persisted in the American Southwest (New Mexico) and Pacific Northwest long after the Revolution. The Peon Act of 1867 nominally abolished debt peonage of Native peoples in New Mexico, where ~1,500–3,000 Navajos and others were still held in bondage."},
+];
+
+const transitions = [
+  {year:"1520–1550",title:"Native → African enslavement (Caribbean & Brazil)",text:"As Native Caribbean populations collapsed from disease and overwork — the Taíno population fell from ~1 million to near extinction within 50 years of contact — Spanish and Portuguese colonizers turned to enslaved Africans to sustain plantation and mining labor. Las Casas initially suggested this substitution, later recanting."},
+  {year:"1680–1720",title:"Native → African enslavement (N. American colonies)",text:"Following King Philip's War and the Yamasee War, the supply of enslaved Native peoples in North America dwindled. English planters shifted decisively to African labor. South Carolina's enslaved African population surpassed its white population by 1708."},
+  {year:"1650–1680",title:"Indentured European → enslaved African (English Caribbean)",text:"Early English plantation labor relied heavily on indentured servants (including Irish and English poor). As sugar profits grew, planters preferred the permanent, inheritable labor of enslaved Africans. By 1680 in Barbados, African enslaved persons outnumbered European indentured workers 3-to-1."},
+  {year:"1808–1860",title:"Atlantic slave trade → internal US slave trade",text:"After the US banned the international slave trade in 1808, a massive internal trade developed: an estimated 1 million enslaved people were sold from the Upper South (Virginia, Maryland) to the Deep South cotton states between 1820 and 1860 — tearing apart families on an enormous scale."},
+  {year:"1865–1941",title:"Legal slavery → convict leasing / debt peonage (US South)",text:"Within months of the 13th Amendment, Southern states enacted Black Codes criminalizing unemployment and vagrancy, feeding a convict-lease system that effectively re-enslaved freedpeople. The federal government did not formally end peonage prosecutions until World War II."},
+  {year:"1888",title:"Formal slavery ends in Brazil — last in the Western Hemisphere",text:"Brazil's Lei Áurea (Golden Law), signed by Princess Regent Isabel on May 13, 1888, ended legal slavery with no compensation to the enslaved and no land redistribution — leaving 700,000 freedpeople without resources and entrenching racial inequality that persists today."},
+];
+
+const scaleData = [
+  ["Trans-Saharan & Indian Ocean (Arab-run)","10–17 million","650–1900 CE","Longest-running of any slave trade; enslaved persons went to N. Africa, Middle East, S. Asia"],
+  ["Atlantic slave trade (all powers)","~12.5 million transported","1501–1867","~2 million died in the Middle Passage; Brazil alone received ~4.9 million"],
+  ["Portugal to Brazil","~4.9 million","1526–1850s","Single largest destination in the Atlantic trade"],
+  ["Britain (all colonies)","~3.1 million","1619–1833","Includes Caribbean, North America"],
+  ["France (all colonies)","~1.4 million","1635–1848","Saint-Domingue (Haiti) the wealthiest colony"],
+  ["Spain (all colonies)","~1.3 million","1501–1886","Cuba last to abolish (1886)"],
+  ["Netherlands","~550,000","1621–1863","Suriname and Caribbean"],
+  ["United States (internal trade after 1808)","~1 million sales","1808–1865","After international trade banned in 1808"],
+  ["Native American enslavement (all powers)","2.5–5 million est.","1493–1867","Estimates highly uncertain; many died before records kept"],
+  ["Intra-African (West/Central Africa)","Millions held internally","Pre-1500 ongoing","Distinct from Atlantic trade; part of pre-existing institutions"],
+  ["Barbary Coast (Europeans enslaved)","1–1.25 million","1530–1830","European captives held in North Africa"],
+];
+
+function buildTransitions(){
+  const c = document.getElementById('transitions-content');
+  transitions.forEach(t=>{
+    const card = document.createElement('div');
+    card.className = 'transition-card';
+    card.innerHTML = '<div class="tc-header"><span class="tc-year">'+t.year+'</span><span class="tc-title">'+t.title+'</span></div><div class="tc-body">'+t.text+'</div>';
+    c.appendChild(card);
+  });
+}
+
+function buildScale(){
+  const c = document.getElementById('scale-content');
+  const table = document.createElement('table');
+  table.className = 'scale';
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th>System / trade</th><th>Estimated total enslaved</th><th>Time span</th><th>Notes</th></tr>';
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  scaleData.forEach(row=>{
+    const tr = document.createElement('tr');
+    row.forEach(cell=>{ const td=document.createElement('td'); td.textContent=cell; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  c.appendChild(table);
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('visible'));
+    this.classList.add('active');
+    document.getElementById('tab-'+this.dataset.tab).classList.add('visible');
+  });
+});
+
+buildSpanTimeline('ow-tl', owRows, 600, 1920, 200);
+buildDetailCards('ow-details', owRows.map(r=>({...r,cls:r.cls,name:r.name,note:r.note})));
+buildSpanTimeline('am-tl', amRows, 1480, 1900, 195);
+buildDetailCards('am-details', amRows.map(r=>({...r,cls:r.cls,name:r.name,note:r.note})));
+buildTransitions();
+buildScale();
+</script>
+</body>
+</html>
